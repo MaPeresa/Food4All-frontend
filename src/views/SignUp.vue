@@ -15,15 +15,7 @@
                 placeholder="Enter email"
                 required />
             </div>
-            <div class="form-group">
-              <label for="phone">Phone number</label>
-              <input
-                type="tel"
-                v-model="phone"
-                class="form-control"
-                placeholder="e.g. +385 91 234 5678"
-                required />
-            </div>
+
             <div class="form-group">
               <label for="password">Password</label>
               <input
@@ -52,32 +44,31 @@
 </template>
 
 <script>
-/* import { ref } from "vue";
-import { firebase } from "@/firebase"; */
+import { ref } from "vue";
+import { firebase } from "@/firebase";
 
 export default {
   name: "Signup",
   data() {
     return {
       email: "",
-      phone: "",
       password: "",
       passwordRepeat: "",
     };
   },
-  /* methods: {
+  methods: {
     signup() {
       firebase
         .auth()
         .createUserWithEmailAndPassword(this.email, this.password)
         .then((userCredential) => {
           console.log("User signed up", userCredential.user);
-          this.$router.push({ name: "FindaDog" });
+          this.$router.push({ name: "home" });
         })
         .catch(function (error) {
           console.error("Error signing up", error);
         });
     },
-  }, */
+  },
 };
 </script>
