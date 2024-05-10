@@ -2,83 +2,84 @@
   <!-- add ingredients -->
 
   <!-- add filters vege, ...(https://vue-multiselect.js.org/#sub-getting-started) -->
+  <div class="container">
+    <h1 class="modal-title fs-5" id="exampleModalLabel">Make a new recipe</h1>
+    <button
+      type="button"
+      class="btn-close"
+      data-bs-dismiss="modal"
+      aria-label="Close"></button>
 
-  <h1 class="modal-title fs-5" id="exampleModalLabel">Make a new recipe</h1>
-  <button
-    type="button"
-    class="btn-close"
-    data-bs-dismiss="modal"
-    aria-label="Close"></button>
-
-  <div class="modal-body">
-    <form @submit.prevent="addRecipe" class="form-inline mb-5">
-      <div class="form-group">
-        <label for="title" class="form-label">Recipe title</label>
-        <input
-          v-model="newTitle"
-          type="text"
-          class="form-control"
-          id="title"
-          required
-          placeholder="Enter the title here"
-          title="" />
-      </div>
-      <div class="form group">
-        <label for="photo" class="form-label">Photo</label>
-        <input
-          type="file"
-          class="form-control"
-          id="photo"
-          @change="handleFileUpload"
-          required
-          accept="image/*" />
-      </div>
-
-      <div class="form-group">
-        <label for="mealType" class="form-label">Meal type</label>
-        <select
-          v-model="newMealType"
-          class="form-select"
-          id="mealType"
-          required
-          title="Select">
-          <option disabled value="">Select meal type</option>
-          <option value="Breakfast">Breakfast</option>
-          <option value="Lunch">Lunch</option>
-          <option value="Dinner">Dinner</option>
-          <option value="Snack">Snack</option>
-        </select>
-      </div>
-
-      <div class="form-group">
-        <label for="time" class="form-label">Time</label>
-        <div class="input-group">
+    <div class="modal-body">
+      <form @submit.prevent="addRecipe" class="form-inline mb-5">
+        <div class="form-group">
+          <label for="title" class="form-label">Recipe title</label>
           <input
-            v-model="newTime"
-            type="number"
+            v-model="newTitle"
+            type="text"
             class="form-control"
-            placeholder="Cooking time"
-            aria-label="Cooking time"
-            aria-describedby="basic-addon2" />
-          <span class="input-group-text" id="basic-addon2">minutes</span>
+            id="title"
+            required
+            placeholder="Enter the title here"
+            title="" />
         </div>
-      </div>
+        <div class="form group">
+          <label for="photo" class="form-label">Photo</label>
+          <input
+            type="file"
+            class="form-control"
+            id="photo"
+            @change="handleFileUpload"
+            required
+            accept="image/*" />
+        </div>
 
-      <div class="form-group">
-        <label for="instructions" class="form-label">Instructions</label>
-        <textarea
-          v-model="newInstructions"
-          class="form-control"
-          id="instructions"
-          required
-          style="height: 150px"
-          placeholder="Write a step-by-step instructions for preparing"
-          title="Write a step-by-step instructions for preparing"></textarea>
-      </div>
-      <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">
-        Add Recipe
-      </button>
-    </form>
+        <div class="form-group">
+          <label for="mealType" class="form-label">Meal type</label>
+          <select
+            v-model="newMealType"
+            class="form-select"
+            id="mealType"
+            required
+            title="Select">
+            <option disabled value="">Select meal type</option>
+            <option value="Breakfast">Breakfast</option>
+            <option value="Lunch">Lunch</option>
+            <option value="Dinner">Dinner</option>
+            <option value="Snack">Snack</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="time" class="form-label">Time</label>
+          <div class="input-group">
+            <input
+              v-model="newTime"
+              type="number"
+              class="form-control"
+              placeholder="Cooking time"
+              aria-label="Cooking time"
+              aria-describedby="basic-addon2" />
+            <span class="input-group-text" id="basic-addon2">minutes</span>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="instructions" class="form-label">Instructions</label>
+          <textarea
+            v-model="newInstructions"
+            class="form-control"
+            id="instructions"
+            required
+            style="height: 150px"
+            placeholder="Write a step-by-step instructions for preparing"
+            title="Write a step-by-step instructions for preparing"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">
+          Add Recipe
+        </button>
+      </form>
+    </div>
   </div>
 </template>
 

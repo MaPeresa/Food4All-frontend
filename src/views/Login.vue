@@ -24,11 +24,10 @@
                 placeholder="Password"
                 required />
             </div>
-            <button type="button" class="btn btn-primary">Login</button>
+            <button type="button" @click="login()" class="btn btn-primary">
+              Login
+            </button>
           </form>
-          <!-- <div v-if="errorMessage" class="alert alert-danger mt-3" role="alert">
-              {{ errorMessage }}
-            </div> -->
         </div>
         <div class="col-sm"></div>
       </div>
@@ -37,8 +36,8 @@
 </template>
 
 <script>
-/* import { firebase } from "@/firebase";
-import store from "@/store"; */
+import { firebase } from "@/firebase";
+import store from "@/store";
 
 export default {
   name: "login",
@@ -48,7 +47,7 @@ export default {
       password: "",
     };
   },
-  /* methods: {
+  methods: {
     login() {
       console.log("Logging in with", this.email);
       firebase
@@ -57,13 +56,13 @@ export default {
         .then((userCredential) => {
           store.currentUser = userCredential.user.email;
           localStorage.setItem("currentUser", userCredential.user.email);
-          this.$router.replace("/FindADog");
+          this.$router.replace("/MyRecipes");
         })
         .catch((error) => {
           console.error("An error occurred", error);
           alert("Error: " + error);
         });
     },
-  }, */
+  },
 };
 </script>

@@ -23,10 +23,10 @@
             <li class="nav-item active">
               <router-link to="/" class="nav-link">Home</router-link>
             </li>
-            <li class="nav-item">
+            <li v-if="!store.currentUser" class="nav-item">
               <router-link to="/Login" class="nav-link">Login</router-link>
             </li>
-            <li class="nav-item">
+            <li v-if="!store.currentUser" class="nav-item">
               <router-link to="/SignUp" class="nav-link">Sign up</router-link>
             </li>
             <li class="nav-item">
@@ -39,9 +39,9 @@
                 >My recipes</router-link
               >
             </li>
-            <!-- <li  class="nav-item">
+            <li v-if="store.currentUser" class="nav-item">
               <a @click.prevent="logout" class="nav-link">Log out</a>
-            </li> -->
+            </li>
           </ul>
         </div>
       </div>
@@ -50,12 +50,12 @@
   </div>
 </template>
 
-<!-- <script>
-/* import store from "@/store";
-import { firebase } from "@/firebase"; */
+<script>
+import store from "@/store";
+import { firebase } from "@/firebase";
 import router from "@/router";
 
-/* firebase.auth().onAuthStateChanged((user) => {
+firebase.auth().onAuthStateChanged((user) => {
   const currentRoute = router.currentRoute;
   if (user) {
     console.log("User is logged in", user.email);
@@ -64,7 +64,7 @@ import router from "@/router";
     console.log("User is not logged in");
     store.currentUser = null;
   }
-}); */
+});
 
 export default {
   name: "App",
@@ -87,7 +87,7 @@ export default {
     },
   },
 };
-</script> -->
+</script>
 
 <style lang="scss">
 #app {
