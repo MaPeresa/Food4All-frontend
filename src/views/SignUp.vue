@@ -15,6 +15,15 @@
                 placeholder="Enter email"
                 required />
             </div>
+            <div class="form-group">
+              <label for="username">Username</label>
+              <input
+                type="username"
+                v-model="username"
+                class="form-control"
+                placeholder="Pick a unique username"
+                required />
+            </div>
 
             <div class="form-group">
               <label for="password">Password</label>
@@ -44,13 +53,13 @@
 </template>
 
 <script>
-import { ref } from "vue";
 import { firebase } from "@/firebase";
 
 export default {
   name: "Signup",
   data() {
     return {
+      username: "",
       email: "",
       password: "",
       passwordRepeat: "",
@@ -58,14 +67,23 @@ export default {
   },
   methods: {
     signup() {
+      if (this.password !== this.passwordRepeat) {
+        console.error("Passwords do not match");
+        return;
+      }
       firebase
         .auth()
         .createUserWithEmailAndPassword(this.email, this.password)
         .then((userCredential) => {
           console.log("User signed up", userCredential.user);
+          return userCredential.user.updateProfile({
+            displayName: this.username,
+          });
+        })
+        .then(() => {
           this.$router.push({ name: "home" });
         })
-        .catch(function (error) {
+        .catch((error) => {
           console.error("Error signing up", error);
         });
     },

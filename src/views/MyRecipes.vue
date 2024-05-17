@@ -1,18 +1,36 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo1.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
+  <div>
+    <h1>My Recipes</h1>
+    <recipe-card></recipe-card>
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from "@/components/HelloWorld.vue";
+//todo: klikom se otvara kartica s receptom
+import RecipeCard from "@/components/RecipeCard.vue";
 
 export default {
-  name: "HomeView",
   components: {
-    HelloWorld,
+    RecipeCard,
+  },
+  methods: {
+    fetchRecipes() {
+      db.collection("recipes")
+        .get()
+        .then((querySnapshot) => {
+          this.recipes = querySnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+        })
+        .catch((error) => {
+          console.error("Error fetching recipes:", error);
+          this.error = "Failed to load recipes. Please try again later.";
+        });
+    },
+    viewRecipe(id) {
+      this.$router.push({ name: "RecipeDetail", params: { id } });
+    },
   },
 };
 </script>

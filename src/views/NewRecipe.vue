@@ -80,6 +80,18 @@
         </button>
       </form>
     </div>
+    <v-snackbar
+      v-model="snackbar"
+      :timeout="5000"
+      :color="snackbarColor"
+      closeable>
+      {{ snackbarText }}
+      <template v-slot:action="{ attrs }">
+        <v-btn color="red" text v-bind="attrs" @click="snackbar = false">
+          Close
+        </v-btn>
+      </template>
+    </v-snackbar>
   </div>
 </template>
 
@@ -93,6 +105,9 @@ export default {
   name: "NewRecipe",
   data() {
     return {
+      snackbar: false,
+      snackbarText: "",
+      snackbarColor: "success",
       newTitle: "",
       newTime: "",
       newMealType: "",
@@ -133,26 +148,45 @@ export default {
       this.newPhoto = file;
     },
     saveRecipe(photoUrl) {
+      if (
+        !this.newTitle ||
+        !this.newInstructions ||
+        !this.newTime ||
+        !this.newMealType ||
+        !photoUrl
+      ) {
+        this.snackbarText = "Please fill all the fields before submitting.";
+        this.snackbarColor = "error";
+        console.log("Setting snackbar true with message:", this.snackbarText);
+        this.snackbar = true;
+        return;
+      }
+
       const recipeData = {
-        naslov: this.newTitle,
-        opis: this.newInstructions,
-        slika: photoUrl,
-        mail: store.currentUser,
+        title: this.newTitle,
+        description: this.newInstructions,
+        photoUrl: photoUrl,
+        email: store.currentUser,
         postedAt: new Date(),
-        vrijeme_kuhanja: this.newTime,
-        tip: this.newmealType,
+        cookingTime: this.newTime,
+        mealType: this.newMealType,
       };
 
       db.collection("recipes")
         .add(recipeData)
         .then(() => {
+          this.snackbarText = "Recipe successfully added!";
+          this.snackbar = true; /* 
+          alert("Recipe added!"); */
           this.resetForm();
-          this.$router.push({ name: "MyRecipes" }).then(() => {
+          /* this.$router.push({ name: "MyRecipes" }).then(() => {
             this.$emit("recipeAdded");
-          });
+          }); */
         })
         .catch((error) => {
-          console.error("Error adding recipe: ", error);
+          this.snackbarText = "Failed to add recipe: " + error.message;
+          this.snackbarColor = "error";
+          this.snackbar = true;
         });
     },
     resetForm() {
