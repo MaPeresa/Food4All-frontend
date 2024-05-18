@@ -8,7 +8,8 @@
 
 <script>
 import RecipeCard from "@/components/RecipeCard.vue";
-import { db, auth } from "@/firebase";
+import { db } from "@/firebase";
+import store from "@/store";
 
 export default {
   components: {
@@ -22,7 +23,7 @@ export default {
   },
   methods: {
     fetchRecipes() {
-      const currentUser = auth.currentUser;
+      const currentUser = store.currentUser;
       if (!currentUser) {
         this.error = "You need to be logged in to see your recipes.";
         return;
@@ -41,12 +42,13 @@ export default {
           this.error = "Failed to load recipes. Please try again later.";
         });
     },
-    viewRecipe(id) {
-      this.$router.push({ name: "RecipeDetail", params: { id } });
-    },
   },
   mounted() {
-    this.fetchRecipes();
+    if (store.currentUser) {
+      this.fetchRecipes();
+    } else {
+      this.error = "You need to be logged in to see your recipes.";
+    }
   },
 };
 </script>

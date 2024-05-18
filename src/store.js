@@ -1,3 +1,4 @@
+// store.js
 import { reactive } from "vue";
 import { firebase } from "@/firebase";
 
@@ -8,7 +9,7 @@ const store = reactive({
     return new Promise((resolve) => {
       firebase.auth().onAuthStateChanged((user) => {
         if (user) {
-          this.currentUser = user.email;
+          this.currentUser = user;
           resolve(true);
         } else {
           this.currentUser = null;
