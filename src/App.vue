@@ -179,7 +179,7 @@ export default {
 }
 nav {
   padding: 30px;
-  background-color: #8d99ae !important;
+  background-color: #780000 !important;
   color: #2b2d42;
   font-weight: bold;
 

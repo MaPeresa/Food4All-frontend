@@ -135,7 +135,7 @@ export default {
           },
           () => {
             uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-              this.saveRecipe(downloadURL);
+              this.saveRecipe(downloadURL, user);
             });
           }
         );
@@ -147,7 +147,7 @@ export default {
       const file = event.target.files[0];
       this.newPhoto = file;
     },
-    saveRecipe(photoUrl) {
+    saveRecipe(photoUrl, user) {
       if (
         !this.newTitle ||
         !this.newInstructions ||
@@ -157,7 +157,6 @@ export default {
       ) {
         this.snackbarText = "Please fill all the fields before submitting.";
         this.snackbarColor = "error";
-        console.log("Setting snackbar true with message:", this.snackbarText);
         this.snackbar = true;
         return;
       }
@@ -166,7 +165,9 @@ export default {
         title: this.newTitle,
         description: this.newInstructions,
         photoUrl: photoUrl,
-        email: store.currentUser,
+        userId: user.uid, // Save user ID
+        username: user.displayName, // Save username
+        email: user.email,
         postedAt: new Date(),
         cookingTime: this.newTime,
         mealType: this.newMealType,
@@ -176,12 +177,8 @@ export default {
         .add(recipeData)
         .then(() => {
           this.snackbarText = "Recipe successfully added!";
-          this.snackbar = true; /* 
-          alert("Recipe added!"); */
+          this.snackbar = true;
           this.resetForm();
-          /* this.$router.push({ name: "MyRecipes" }).then(() => {
-            this.$emit("recipeAdded");
-          }); */
         })
         .catch((error) => {
           this.snackbarText = "Failed to add recipe: " + error.message;
@@ -190,11 +187,11 @@ export default {
         });
     },
     resetForm() {
-      (this.newTitle = ""),
-        (this.newTime = ""),
-        (this.newMealType = ""),
-        (this.newInstructions = ""),
-        (this.newPhoto = "");
+      this.newTitle = "";
+      this.newTime = "";
+      this.newMealType = "";
+      this.newInstructions = "";
+      this.newPhoto = null;
     },
   },
 };
