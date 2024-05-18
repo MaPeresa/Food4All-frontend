@@ -2,28 +2,65 @@
   <v-container>
     <v-row>
       <v-col cols="12" sm="6" md="4" v-for="recipe in recipes" :key="recipe.id">
-        <v-card
-          @click="viewRecipe(recipe.id)"
-          class="cursor-pointer d-flex flex-column justify-end"
-          ripple
-          height="300px">
-          <v-img
-            :src="recipe.photoUrl"
-            height="100%"
-            width="100%"
-            cover
-            class="position-absolute"></v-img>
-          <v-card-text class="position-relative mt-auto text-background p-0">
-            <div class="gradient-div">
-              <div class="text-content">
-                <div>{{ recipe.title }}</div>
-                <div>{{ recipe.username }}</div>
+        <v-hover v-slot="{ isHovering, props }">
+          <v-card
+            class="cursor-pointer d-flex flex-column justify-end"
+            v-bind="props">
+            <v-img
+              :src="recipe.photoUrl"
+              height="200"
+              width="100%"
+              cover></v-img>
+            <v-card-text class="position-relative mt-auto text-background p-0">
+              <div class="gradient-div">
+                <div class="text-content">
+                  <div>{{ recipe.title }}</div>
+                  <div>{{ recipe.username }}</div>
+                </div>
               </div>
-            </div>
-          </v-card-text>
-        </v-card>
+            </v-card-text>
+
+            <v-overlay
+              :model-value="isHovering"
+              class="align-center justify-center"
+              scrim="rgba(255, 255, 255, 0.9)"
+              contained>
+              <div class="hover-content pa-4">
+                <div><strong>Meal Type:</strong> {{ recipe.mealType }}</div>
+                <div>
+                  <strong>Cooking Time:</strong>
+                  {{ recipe.cookingTime }} minutes
+                </div>
+                <v-btn color="primary" @click.stop="openRecipePopup(recipe)"
+                  >View Full Recipe</v-btn
+                >
+              </div>
+            </v-overlay>
+          </v-card>
+        </v-hover>
       </v-col>
     </v-row>
+
+    <v-dialog v-model="showRecipePopup" max-width="600px">
+      <v-card>
+        <v-card-title class="headline">{{ selectedRecipe.title }}</v-card-title>
+        <v-card-text>
+          <div><strong>Username:</strong> {{ selectedRecipe.username }}</div>
+          <div><strong>Meal Type:</strong> {{ selectedRecipe.mealType }}</div>
+          <div>
+            <strong>Cooking Time:</strong>
+            {{ selectedRecipe.cookingTime }} minutes
+          </div>
+          <div>
+            <strong>Description:</strong> {{ selectedRecipe.description }}
+          </div>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="primary" @click="showRecipePopup = false">Close</v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
   </v-container>
 </template>
 
@@ -36,9 +73,16 @@ export default {
       required: true,
     },
   },
+  data() {
+    return {
+      showRecipePopup: false,
+      selectedRecipe: {},
+    };
+  },
   methods: {
-    viewRecipe(id) {
-      this.$router.push({ name: "RecipeDetail", params: { id } });
+    openRecipePopup(recipe) {
+      this.selectedRecipe = recipe;
+      this.showRecipePopup = true;
     },
   },
 };
@@ -68,22 +112,12 @@ export default {
   font-weight: bold;
   text-align: right;
 }
+
+.pa-4 {
+  padding: 16px;
+}
+
+.hover-content {
+  text-align: center;
+}
 </style>
-
-<!-- HTML !-->
-<button
-  class="button-64"
-  role="button"><span class="text">Button 64</span></button>
-
-/* CSS */ .button-64 { align-items: center; background-image:
-linear-gradient(144deg,#AF40FF, #5B42F3 50%,#00DDEB); border: 0; border-radius:
-8px; box-shadow: rgba(151, 65, 252, 0.2) 0 15px 30px -5px; box-sizing:
-border-box; color: #FFFFFF; display: flex; font-family: Phantomsans, sans-serif;
-font-size: 20px; justify-content: center; line-height: 1em; max-width: 100%;
-min-width: 140px; padding: 3px; text-decoration: none; user-select: none;
--webkit-user-select: none; touch-action: manipulation; white-space: nowrap;
-cursor: pointer; } .button-64:active, .button-64:hover { outline: 0; }
-.button-64 span { background-color: rgb(5, 6, 45); padding: 16px 24px;
-border-radius: 6px; width: 100%; height: 100%; transition: 300ms; }
-.button-64:hover span { background: none; } @media (min-width: 768px) {
-.button-64 { font-size: 24px; min-width: 196px; } }

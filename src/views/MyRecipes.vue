@@ -2,14 +2,13 @@
   <div>
     <h1>My Recipes</h1>
     <recipe-card :recipes="recipes"></recipe-card>
-    <div v-if="error" class="error">{{ error }}</div>
   </div>
 </template>
 
 <script>
 import RecipeCard from "@/components/RecipeCard.vue";
 import { db } from "@/firebase";
-import store from "@/store";
+import { auth } from "@/firebase";
 
 export default {
   components: {
@@ -23,7 +22,7 @@ export default {
   },
   methods: {
     fetchRecipes() {
-      const currentUser = store.currentUser;
+      const currentUser = auth.currentUser;
       if (!currentUser) {
         this.error = "You need to be logged in to see your recipes.";
         return;
@@ -44,11 +43,7 @@ export default {
     },
   },
   mounted() {
-    if (store.currentUser) {
-      this.fetchRecipes();
-    } else {
-      this.error = "You need to be logged in to see your recipes.";
-    }
+    this.fetchRecipes();
   },
 };
 </script>
