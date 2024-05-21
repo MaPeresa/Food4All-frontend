@@ -1,18 +1,50 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo1.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
-  </div>
+  <v-container>
+    <h1>All Recipes</h1>
+    <recipe-card :recipes="recipes"></recipe-card>
+  </v-container>
 </template>
 
 <script>
-// @ is an alias to /src
-import HelloWorld from "@/components/HelloWorld.vue";
+import RecipeCard from "@/components/RecipeCard.vue";
+import { db } from "@/firebase";
 
 export default {
-  name: "HomeView",
+  name: "Homeview",
   components: {
-    HelloWorld,
+    RecipeCard,
+  },
+  data() {
+    return {
+      recipes: [],
+      error: null,
+    };
+  },
+  methods: {
+    fetchRecipes() {
+      db.collection("recipes")
+        .get()
+        .then((querySnapshot) => {
+          this.recipes = querySnapshot.docs.map((doc) => ({
+            id: doc.id,
+            ...doc.data(),
+          }));
+        })
+        .catch((error) => {
+          console.error("Error fetching recipes:", error);
+          this.error = "Failed to load recipes. Please try again later.";
+        });
+    },
+  },
+  mounted() {
+    this.fetchRecipes();
   },
 };
 </script>
+
+<style scoped>
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+</style>

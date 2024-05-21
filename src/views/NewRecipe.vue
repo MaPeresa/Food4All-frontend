@@ -1,7 +1,4 @@
 <template>
-  <!-- add ingredients -->
-
-  <!-- add filters vege, ...(https://vue-multiselect.js.org/#sub-getting-started) -->
   <div class="container">
     <h1 class="modal-title fs-5" id="exampleModalLabel">Make a new recipe</h1>
     <button
@@ -20,10 +17,9 @@
             class="form-control"
             id="title"
             required
-            placeholder="Enter the title here"
-            title="" />
+            placeholder="Enter the title here" />
         </div>
-        <div class="form group">
+        <div class="form-group">
           <label for="photo" class="form-label">Photo</label>
           <input
             type="file"
@@ -40,8 +36,7 @@
             v-model="newMealType"
             class="form-select"
             id="mealType"
-            required
-            title="Select">
+            required>
             <option disabled value="">Select meal type</option>
             <option value="Breakfast">Breakfast</option>
             <option value="Lunch">Lunch</option>
@@ -72,9 +67,19 @@
             id="instructions"
             required
             style="height: 150px"
-            placeholder="Write a step-by-step instructions for preparing"
-            title="Write a step-by-step instructions for preparing"></textarea>
+            placeholder="Write step-by-step instructions"></textarea>
         </div>
+
+        <div class="form-group">
+          <label class="form-label">Ingredients</label>
+          <v-btn @click="showIngredientInputPopup">Add Ingredient</v-btn>
+          <ul>
+            <li v-for="(item, index) in ingredients" :key="index">
+              {{ item.ingredient }} - {{ item.quantity }}
+            </li>
+          </ul>
+        </div>
+
         <button type="submit" class="btn btn-primary" data-bs-dismiss="modal">
           Add Recipe
         </button>
@@ -92,17 +97,23 @@
         </v-btn>
       </template>
     </v-snackbar>
+    <ingredient-input-popup
+      ref="ingredientInputPopup"
+      @add-ingredient="addIngredient"></ingredient-input-popup>
   </div>
 </template>
 
 <script>
 import { db } from "@/firebase";
-import store from "@/store";
 import firebase from "firebase/app";
 import "firebase/storage";
+import IngredientInputPopup from "@/components/IngredientInputPopup.vue";
 
 export default {
   name: "NewRecipe",
+  components: {
+    IngredientInputPopup,
+  },
   data() {
     return {
       snackbar: false,
@@ -113,12 +124,13 @@ export default {
       newMealType: "",
       newInstructions: "",
       newPhoto: null,
+      ingredients: [],
     };
   },
   methods: {
     addRecipe(event) {
       event.preventDefault();
-      const user = firebase.auth().currentUser; // Get the current user
+      const user = firebase.auth().currentUser;
       if (this.newPhoto && user) {
         const storageRef = firebase
           .storage()
@@ -127,9 +139,7 @@ export default {
 
         uploadTask.on(
           "state_changed",
-          (snapshot) => {
-            // Optional: Handle progress
-          },
+          (snapshot) => {},
           (error) => {
             console.error("Error uploading file:", error);
           },
@@ -164,13 +174,14 @@ export default {
       const recipeData = {
         title: this.newTitle,
         description: this.newInstructions,
-        photoUrl: photoUrl,
-        userId: user.uid, // Save user ID
-        username: user.displayName, // Save username
+        photoUrl,
+        userId: user.uid,
+        username: user.displayName,
         email: user.email,
         postedAt: new Date(),
         cookingTime: this.newTime,
         mealType: this.newMealType,
+        ingredients: this.ingredients,
       };
 
       db.collection("recipes")
@@ -192,6 +203,13 @@ export default {
       this.newMealType = "";
       this.newInstructions = "";
       this.newPhoto = null;
+      this.ingredients = [];
+    },
+    showIngredientInputPopup() {
+      this.$refs.ingredientInputPopup.openDialog();
+    },
+    addIngredient(ingredient) {
+      this.ingredients.push(ingredient);
     },
   },
 };
