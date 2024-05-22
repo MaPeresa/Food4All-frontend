@@ -1,43 +1,52 @@
 <template>
   <v-container>
     <h1>All Recipes</h1>
-    <recipe-card :recipes="recipes"></recipe-card>
+    <v-progress-circular v-if="loading" indeterminate></v-progress-circular>
+    <recipe-card v-else :recipes="recipes"></recipe-card>
+    <v-alert v-if="error" type="error">{{ error }}</v-alert>
   </v-container>
 </template>
 
 <script>
 import RecipeCard from "@/components/RecipeCard.vue";
 import { db } from "@/firebase";
+import { ref, onMounted } from "vue";
 
 export default {
-  name: "Homeview",
+  name: "HomeView",
   components: {
     RecipeCard,
   },
-  data() {
-    return {
-      recipes: [],
-      error: null,
-    };
-  },
-  methods: {
-    fetchRecipes() {
+  setup() {
+    const recipes = ref([]);
+    const error = ref(null);
+    const loading = ref(false);
+
+    const fetchRecipes = () => {
+      loading.value = true;
       db.collection("recipes")
         .get()
         .then((querySnapshot) => {
-          this.recipes = querySnapshot.docs.map((doc) => ({
+          recipes.value = querySnapshot.docs.map((doc) => ({
             id: doc.id,
             ...doc.data(),
           }));
+          loading.value = false;
         })
-        .catch((error) => {
-          console.error("Error fetching recipes:", error);
-          this.error = "Failed to load recipes. Please try again later.";
+        .catch((err) => {
+          console.error("Error fetching recipes:", err);
+          error.value = "Failed to load recipes. Please try again later.";
+          loading.value = false;
         });
-    },
-  },
-  mounted() {
-    this.fetchRecipes();
+    };
+
+    onMounted(fetchRecipes);
+
+    return {
+      recipes,
+      error,
+      loading,
+    };
   },
 };
 </script>

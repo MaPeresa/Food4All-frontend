@@ -108,109 +108,129 @@ import { db } from "@/firebase";
 import firebase from "firebase/app";
 import "firebase/storage";
 import IngredientInputPopup from "@/components/IngredientInputPopup.vue";
+import { ref } from "vue";
 
 export default {
   name: "NewRecipe",
   components: {
     IngredientInputPopup,
   },
-  data() {
-    return {
-      snackbar: false,
-      snackbarText: "",
-      snackbarColor: "success",
-      newTitle: "",
-      newTime: "",
-      newMealType: "",
-      newInstructions: "",
-      newPhoto: null,
-      ingredients: [],
+  setup() {
+    const snackbar = ref(false);
+    const snackbarText = ref("");
+    const snackbarColor = ref("success");
+    const newTitle = ref("");
+    const newTime = ref("");
+    const newMealType = ref("");
+    const newInstructions = ref("");
+    const newPhoto = ref(null);
+    const ingredients = ref([]);
+
+    const handleFileUpload = (event) => {
+      const file = event.target.files[0];
+      newPhoto.value = file;
     };
-  },
-  methods: {
-    addRecipe(event) {
+
+    const addRecipe = (event) => {
       event.preventDefault();
       const user = firebase.auth().currentUser;
-      if (this.newPhoto && user) {
+      if (newPhoto.value && user) {
         const storageRef = firebase
           .storage()
-          .ref(`recipes/${user.uid}/${this.newPhoto.name}`);
-        const uploadTask = storageRef.put(this.newPhoto);
+          .ref(`recipes/${user.uid}/${newPhoto.value.name}`);
+        const uploadTask = storageRef.put(newPhoto.value);
 
         uploadTask.on(
           "state_changed",
-          (snapshot) => {},
+          () => {},
           (error) => {
             console.error("Error uploading file:", error);
           },
           () => {
             uploadTask.snapshot.ref.getDownloadURL().then((downloadURL) => {
-              this.saveRecipe(downloadURL, user);
+              saveRecipe(downloadURL, user);
             });
           }
         );
       } else {
         console.error("User is not authenticated or photo is not selected.");
       }
-    },
-    handleFileUpload(event) {
-      const file = event.target.files[0];
-      this.newPhoto = file;
-    },
-    saveRecipe(photoUrl, user) {
+    };
+
+    const saveRecipe = (photoUrl, user) => {
       if (
-        !this.newTitle ||
-        !this.newInstructions ||
-        !this.newTime ||
-        !this.newMealType ||
+        !newTitle.value ||
+        !newInstructions.value ||
+        !newTime.value ||
+        !newMealType.value ||
         !photoUrl
       ) {
-        this.snackbarText = "Please fill all the fields before submitting.";
-        this.snackbarColor = "error";
-        this.snackbar = true;
+        snackbarText.value = "Please fill all the fields before submitting.";
+        snackbarColor.value = "error";
+        snackbar.value = true;
         return;
       }
 
       const recipeData = {
-        title: this.newTitle,
-        description: this.newInstructions,
+        title: newTitle.value,
+        description: newInstructions.value,
         photoUrl,
         userId: user.uid,
         username: user.displayName,
         email: user.email,
         postedAt: new Date(),
-        cookingTime: this.newTime,
-        mealType: this.newMealType,
-        ingredients: this.ingredients,
+        cookingTime: newTime.value,
+        mealType: newMealType.value,
+        ingredients: ingredients.value,
       };
 
       db.collection("recipes")
         .add(recipeData)
         .then(() => {
-          this.snackbarText = "Recipe successfully added!";
-          this.snackbar = true;
-          this.resetForm();
+          snackbarText.value = "Recipe successfully added!";
+          snackbar.value = true;
+          resetForm();
         })
         .catch((error) => {
-          this.snackbarText = "Failed to add recipe: " + error.message;
-          this.snackbarColor = "error";
-          this.snackbar = true;
+          snackbarText.value = "Failed to add recipe: " + error.message;
+          snackbarColor.value = "error";
+          snackbar.value = true;
         });
-    },
-    resetForm() {
-      this.newTitle = "";
-      this.newTime = "";
-      this.newMealType = "";
-      this.newInstructions = "";
-      this.newPhoto = null;
-      this.ingredients = [];
-    },
-    showIngredientInputPopup() {
-      this.$refs.ingredientInputPopup.openDialog();
-    },
-    addIngredient(ingredient) {
-      this.ingredients.push(ingredient);
-    },
+    };
+
+    const resetForm = () => {
+      newTitle.value = "";
+      newTime.value = "";
+      newMealType.value = "";
+      newInstructions.value = "";
+      newPhoto.value = null;
+      ingredients.value = [];
+    };
+
+    const showIngredientInputPopup = () => {
+      refs.ingredientInputPopup.openDialog();
+    };
+
+    const addIngredient = (ingredient) => {
+      ingredients.value.push(ingredient);
+    };
+
+    return {
+      snackbar,
+      snackbarText,
+      snackbarColor,
+      newTitle,
+      newTime,
+      newMealType,
+      newInstructions,
+      newPhoto,
+      ingredients,
+      handleFileUpload,
+      addRecipe,
+      resetForm,
+      showIngredientInputPopup,
+      addIngredient,
+    };
   },
 };
 </script>

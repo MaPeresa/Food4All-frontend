@@ -54,25 +54,24 @@
 import store from "@/store";
 import { firebase } from "@/firebase";
 import router from "@/router";
-
-firebase.auth().onAuthStateChanged((user) => {
-  const currentRoute = router.currentRoute;
-  if (user) {
-    console.log("User is logged in", user.email);
-    store.currentUser = user.email;
-  } else {
-    console.log("User is not logged in");
-    store.currentUser = null;
-  }
-});
+import { onMounted } from "vue";
 
 export default {
   name: "App",
   setup() {
-    return { store };
-  },
-  methods: {
-    logout() {
+    onMounted(() => {
+      firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
+          console.log("User is logged in", user.email);
+          store.currentUser = user.email;
+        } else {
+          console.log("User is not logged in");
+          store.currentUser = null;
+        }
+      });
+    });
+
+    const logout = () => {
       firebase
         .auth()
         .signOut()
@@ -84,7 +83,12 @@ export default {
         .catch((error) => {
           console.error("An error occurred", error);
         });
-    },
+    };
+
+    return {
+      store,
+      logout,
+    };
   },
 };
 </script>
@@ -98,7 +102,6 @@ export default {
   text-align: center;
   color: #2b2d42 !important;
   min-height: 1024px;
-  /* background: url("@/assets/vectorpozadina.png") no-repeat bottom center; */
   background-size: 100%;
 }
 
