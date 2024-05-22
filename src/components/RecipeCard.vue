@@ -44,8 +44,19 @@
     <v-dialog v-model="showRecipePopup" max-width="600px">
       <v-card>
         <v-card-title class="headline">{{ selectedRecipe.title }}</v-card-title>
+        <div class="image-container">
+          <v-img
+            v-if="selectedRecipe.photoUrl"
+            :src="selectedRecipe.photoUrl"
+            height="300"
+            cover></v-img>
+          <div class="overlay-text">
+            <div>
+              <strong> {{ selectedRecipe.username }}</strong>
+            </div>
+          </div>
+        </div>
         <v-card-text>
-          <div><strong>Username:</strong> {{ selectedRecipe.username }}</div>
           <div><strong>Meal Type:</strong> {{ selectedRecipe.mealType }}</div>
           <div>
             <strong>Cooking Time:</strong>
@@ -121,5 +132,20 @@ export default {
   text-align: center;
   background-color: rgba(0, 0, 0, 0.7);
   color: white;
+}
+
+.image-container {
+  position: relative;
+  width: 100%;
+}
+
+.overlay-text {
+  position: absolute;
+  bottom: 10px;
+  left: 10px;
+  color: white;
+  background: rgba(0, 0, 0, 0.5);
+  padding: 10px;
+  border-radius: 5px;
 }
 </style>
