@@ -1,14 +1,15 @@
 <template>
-  <v-container>
+  <v-container class="mx-auto pa-4" style="max-width: 1200px">
     <v-row>
       <v-col cols="12" sm="6" md="4" v-for="recipe in recipes" :key="recipe.id">
         <v-hover v-slot="{ isHovering, props }">
           <v-card
             class="cursor-pointer d-flex flex-column justify-end"
-            v-bind="props">
+            v-bind="props"
+            height="300px">
             <v-img
               :src="recipe.photoUrl"
-              height="200"
+              height="300"
               width="100%"
               cover></v-img>
             <v-card-text class="position-relative mt-auto text-background p-0">

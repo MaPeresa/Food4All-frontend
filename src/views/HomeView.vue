@@ -20,24 +20,21 @@ export default {
   setup() {
     const recipes = ref([]);
     const error = ref(null);
-    const loading = ref(false);
+    const loading = ref(true);
 
-    const fetchRecipes = () => {
-      loading.value = true;
-      db.collection("recipes")
-        .get()
-        .then((querySnapshot) => {
-          recipes.value = querySnapshot.docs.map((doc) => ({
-            id: doc.id,
-            ...doc.data(),
-          }));
-          loading.value = false;
-        })
-        .catch((err) => {
-          console.error("Error fetching recipes:", err);
-          error.value = "Failed to load recipes. Please try again later.";
-          loading.value = false;
-        });
+    const fetchRecipes = async () => {
+      try {
+        const querySnapshot = await db.collection("recipes").get();
+        recipes.value = querySnapshot.docs.map((doc) => ({
+          id: doc.id,
+          ...doc.data(),
+        }));
+      } catch (err) {
+        console.error("Error fetching recipes:", err);
+        error.value = "Failed to load recipes. Please try again later.";
+      } finally {
+        loading.value = false;
+      }
     };
 
     onMounted(fetchRecipes);
