@@ -26,16 +26,10 @@ const routes = [
       import(/* webpackChunkName: "about" */ "../views/Login.vue"),
   },
   {
-    path: "/NewRecipe",
-    name: "NewRecipe",
+    path: "/MyAccount",
+    name: "MyAccount",
     component: () =>
-      import(/* webpackChunkName: "about" */ "../views/NewRecipe.vue"),
-  },
-  {
-    path: "/MyRecipes",
-    name: "MyRecipes",
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/MyRecipes.vue"),
+      import(/* webpackChunkName: "about" */ "../views/MyAccount.vue"),
   },
 ];
 

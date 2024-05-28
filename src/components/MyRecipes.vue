@@ -13,22 +13,23 @@ import { db, auth } from "@/firebase";
 import { ref, onMounted } from "vue";
 
 export default {
+  name: "MyRecipes",
   components: {
     RecipeCard,
   },
   setup() {
     const recipes = ref([]);
     const error = ref(null);
-    const loading = ref(false);
+    const loading = ref(true);
 
     const fetchRecipes = () => {
       const currentUser = auth.currentUser;
       if (!currentUser) {
         error.value = "You need to be logged in to see your recipes.";
+        loading.value = false;
         return;
       }
 
-      loading.value = true;
       db.collection("recipes")
         .where("userId", "==", currentUser.uid)
         .get()
@@ -56,3 +57,10 @@ export default {
   },
 };
 </script>
+
+<style scoped>
+h1 {
+  text-align: center;
+  margin-bottom: 20px;
+}
+</style>

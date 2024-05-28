@@ -30,13 +30,8 @@
               <router-link to="/SignUp" class="nav-link">Sign up</router-link>
             </li>
             <li class="nav-item">
-              <router-link to="/NewRecipe" class="nav-link"
-                >New Recipe</router-link
-              >
-            </li>
-            <li class="nav-item">
-              <router-link to="/MyRecipes" class="nav-link"
-                >My recipes</router-link
+              <router-link to="/MyAccount" class="nav-link"
+                >My Account</router-link
               >
             </li>
             <li v-if="store.currentUser" class="nav-item">

@@ -67,7 +67,7 @@
       :color="snackbarColor"
       closeable>
       {{ snackbarText }}
-      <template v-slot:action="{ attrs }">
+      <template v-slot:actions="{ attrs }">
         <v-btn color="red" text v-bind="attrs" @click="snackbar = false"
           >Close</v-btn
         >
@@ -118,8 +118,7 @@ export default {
       newPhoto.value = file;
     };
 
-    const addRecipe = (event) => {
-      event.preventDefault();
+    const addRecipe = () => {
       const user = firebase.auth().currentUser;
       if (newPhoto.value && user) {
         const storageRef = firebase

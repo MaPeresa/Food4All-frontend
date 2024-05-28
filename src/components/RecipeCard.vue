@@ -6,7 +6,8 @@
           <v-card
             class="cursor-pointer d-flex flex-column justify-end"
             v-bind="props"
-            height="300px">
+            height="300px"
+            @click="openRecipePopup(recipe)">
             <v-img
               :src="recipe.photoUrl"
               height="300"
@@ -32,9 +33,13 @@
                   <strong>Cooking Time:</strong>
                   {{ recipe.cookingTime }} minutes
                 </div>
-                <v-btn color="primary" @click.stop="openRecipePopup(recipe)"
-                  >View Full Recipe</v-btn
-                >
+                <v-rating
+                  v-model="recipe.rating"
+                  size="x-small"
+                  active-color="yellow"
+                  color="grey"
+                  density="comfortable"
+                  readonly></v-rating>
               </div>
             </v-overlay>
           </v-card>
@@ -66,6 +71,7 @@
           <div>
             <strong>Description:</strong> {{ selectedRecipe.description }}
           </div>
+          <v-rating v-model="selectedRecipe.rating" readonly></v-rating>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
