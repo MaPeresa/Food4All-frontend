@@ -10,13 +10,35 @@
       </v-col>
       <v-col cols="10">
         <v-card-text>
+          <v-row class="mb-4">
+            <v-col cols="6">
+              <v-text-field
+                v-model="searchQuery"
+                label="Search Recipes"></v-text-field>
+            </v-col>
+            <v-col cols="6">
+              <v-autocomplete
+                v-model="selectedFilters"
+                :items="filterOptions"
+                label="Filter Recipes"
+                chips
+                closable-chips
+                multiple></v-autocomplete>
+            </v-col>
+          </v-row>
           <v-tabs-window v-model="tab">
             <v-tabs-window-item value="allRecipes">
               <h1>All Recipes</h1>
               <v-progress-circular
                 v-if="loading"
                 indeterminate></v-progress-circular>
-              <recipe-card v-else :recipes="recipes"></recipe-card>
+              <div v-else>
+                <recipe-card :recipes="paginatedRecipes"></recipe-card>
+                <v-pagination
+                  v-model="page"
+                  :length="pageCount"
+                  class="mt-4"></v-pagination>
+              </div>
               <v-alert v-if="error" type="error">{{ error }}</v-alert>
             </v-tabs-window-item>
 
@@ -44,7 +66,7 @@
 import RecipeCard from "@/components/RecipeCard.vue";
 import MyRecipes from "@/components/MyRecipes.vue";
 import { db, auth } from "@/firebase";
-import { ref, onMounted } from "vue";
+import { ref, computed, onMounted } from "vue";
 
 export default {
   name: "HomeView",
@@ -57,6 +79,19 @@ export default {
     const recipes = ref([]);
     const error = ref(null);
     const loading = ref(true);
+    const page = ref(1);
+    const itemsPerPage = 15;
+    const searchQuery = ref("");
+    const selectedFilters = ref([]);
+    const filterOptions = [
+      "Vegetarian",
+      "Vegan",
+      "Nut Free",
+      "Gluten Free",
+      "Dairy Free",
+      "Soy Free",
+      "Under 15 minutes",
+    ];
 
     const favoriteRecipes = ref([]);
     const errorFavorites = ref(null);
@@ -109,6 +144,30 @@ export default {
       fetchFavoriteRecipes();
     });
 
+    const filteredRecipes = computed(() => {
+      return recipes.value.filter((recipe) => {
+        const matchesSearch = recipe.title
+          .toLowerCase()
+          .includes(searchQuery.value.toLowerCase());
+        const matchesFilters =
+          selectedFilters.value.length === 0 ||
+          selectedFilters.value.every((filter) =>
+            (recipe.filters || []).includes(filter)
+          );
+        return matchesSearch && matchesFilters;
+      });
+    });
+
+    const paginatedRecipes = computed(() => {
+      const start = (page.value - 1) * itemsPerPage;
+      const end = start + itemsPerPage;
+      return filteredRecipes.value.slice(start, end);
+    });
+
+    const pageCount = computed(() => {
+      return Math.ceil(filteredRecipes.value.length / itemsPerPage);
+    });
+
     return {
       tab,
       recipes,
@@ -117,6 +176,13 @@ export default {
       favoriteRecipes,
       errorFavorites,
       loadingFavorites,
+      page,
+      searchQuery,
+      selectedFilters,
+      filterOptions,
+      filteredRecipes,
+      paginatedRecipes,
+      pageCount,
     };
   },
 };

@@ -1,6 +1,6 @@
 <template>
-  <v-container>
-    <h1 class="text-h5 mb-4">Make a new recipe</h1>
+  <v-container v-if="isLoggedIn">
+    <h1>Add a new recipe</h1>
 
     <v-form @submit.prevent="addRecipe">
       <v-text-field
@@ -52,7 +52,7 @@
         >Add Ingredient</v-btn
       >
 
-      <ul>
+      <ul class="ingredients-list">
         <li v-for="(item, index) in ingredients" :key="index">
           {{ item.ingredient }} - {{ item.quantity }}
         </li>
@@ -78,6 +78,9 @@
       ref="ingredientInputPopup"
       @add-ingredient="addIngredient"></ingredient-input-popup>
   </v-container>
+  <v-alert v-else type="error"
+    >You need to be logged in to add a recipe.</v-alert
+  >
 </template>
 
 <script>
@@ -85,7 +88,7 @@ import { db } from "@/firebase";
 import firebase from "firebase/app";
 import "firebase/storage";
 import IngredientInputPopup from "@/components/IngredientInputPopup.vue";
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 
 export default {
   name: "NewRecipe",
@@ -103,6 +106,8 @@ export default {
     const newPhoto = ref(null);
     const ingredients = ref([]);
     const filters = ref([]);
+    const isLoggedIn = ref(false);
+    const ingredientInputPopup = ref(null);
     const filterOptions = [
       "Vegetarian",
       "Vegan",
@@ -196,12 +201,28 @@ export default {
     };
 
     const showIngredientInputPopup = () => {
-      refs.ingredientInputPopup.openDialog();
+      if (ingredientInputPopup.value) {
+        ingredientInputPopup.value.openDialog();
+      }
     };
 
     const addIngredient = (ingredient) => {
       ingredients.value.push(ingredient);
     };
+
+    const checkUserStatus = () => {
+      firebase.auth().onAuthStateChanged((user) => {
+        if (user) {
+          isLoggedIn.value = true;
+        } else {
+          isLoggedIn.value = false;
+        }
+      });
+    };
+
+    onMounted(() => {
+      checkUserStatus();
+    });
 
     return {
       snackbar,
@@ -220,6 +241,8 @@ export default {
       resetForm,
       showIngredientInputPopup,
       addIngredient,
+      isLoggedIn,
+      ingredientInputPopup,
     };
   },
 };
@@ -228,5 +251,10 @@ export default {
 <style scoped>
 .form-group {
   margin-bottom: 1rem;
+}
+.ingredients-list {
+  list-style-type: none;
+  padding-left: 20px;
+  text-align: left;
 }
 </style>

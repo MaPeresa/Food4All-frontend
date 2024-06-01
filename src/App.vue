@@ -178,15 +178,15 @@ export default {
 nav {
   padding: 30px;
   background-color: #780000 !important;
-  color: #2b2d42;
+  color: #ffffff;
   font-weight: bold;
 
   a {
-    color: #2b2d42 !important;
-
+    color: #ffffff !important;
     &.router-link-exact-active {
-      font-weight: semibold;
-      color: #2b2d42;
+      text-transform: uppercase;
+      font-weight: extra-light;
+      color: #ffffff;
       background: rgba(237, 242, 244, 0.28);
       border-radius: 8px;
     }

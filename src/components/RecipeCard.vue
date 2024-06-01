@@ -34,12 +34,14 @@
                   {{ recipe.cookingTime }} minutes
                 </div>
                 <v-rating
-                  v-model="recipe.rating"
+                  v-model="recipe.userRating"
                   size="x-small"
                   active-color="yellow"
                   color="grey"
                   density="comfortable"
-                  readonly></v-rating>
+                  readonly
+                  @change="rateRecipe(recipe, $event)"></v-rating>
+                <div></div>
               </div>
             </v-overlay>
           </v-card>
@@ -71,7 +73,12 @@
           <div>
             <strong>Description:</strong> {{ selectedRecipe.description }}
           </div>
-          <v-rating v-model="selectedRecipe.rating" readonly></v-rating>
+          <v-rating
+            v-model="selectedRecipe.userRating"
+            @change="rateRecipe(selectedRecipe, $event)"></v-rating>
+          <div>
+            <strong>Average Rating:</strong> {{ selectedRecipe.averageRating }}
+          </div>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
@@ -83,6 +90,9 @@
 </template>
 
 <script>
+import { db, auth } from "@/firebase";
+import { ref } from "vue";
+
 export default {
   name: "Recipes",
   props: {
@@ -101,6 +111,37 @@ export default {
     openRecipePopup(recipe) {
       this.selectedRecipe = recipe;
       this.showRecipePopup = true;
+    },
+    async rateRecipe(recipe, rating) {
+      const user = auth.currentUser;
+      if (!user) {
+        alert("You need to be logged in to rate recipes.");
+        return;
+      }
+
+      try {
+        const recipeRef = db.collection("recipes").doc(recipe.id);
+        await recipeRef.update({
+          ratings: firebase.firestore.FieldValue.arrayUnion({
+            userId: user.uid,
+            rating,
+          }),
+        });
+
+        // Recalculate average rating
+        const doc = await recipeRef.get();
+        const ratings = doc.data().ratings || [];
+        const totalRating = ratings.reduce((sum, r) => sum + r.rating, 0);
+        const averageRating = totalRating / ratings.length;
+
+        await recipeRef.update({ averageRating });
+
+        // Update local state
+        recipe.userRating = rating;
+        recipe.averageRating = averageRating;
+      } catch (error) {
+        console.error("Error rating recipe: ", error);
+      }
     },
   },
 };
