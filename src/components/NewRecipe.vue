@@ -32,6 +32,15 @@
         outlined
         class="mb-4"></v-text-field>
 
+      <v-btn @click="showIngredientInputPopup" class="mb-4"
+        >Add Ingredient</v-btn
+      >
+
+      <ul class="ingredients-list">
+        <li v-for="(item, index) in ingredients" :key="index">
+          {{ item.ingredient }} - {{ item.quantity }}
+        </li>
+      </ul>
       <v-textarea
         v-model="newInstructions"
         label="Instructions"
@@ -48,17 +57,7 @@
         multiple
         class="mb-4"></v-autocomplete>
 
-      <v-btn @click="showIngredientInputPopup" class="mb-4"
-        >Add Ingredient</v-btn
-      >
-
-      <ul class="ingredients-list">
-        <li v-for="(item, index) in ingredients" :key="index">
-          {{ item.ingredient }} - {{ item.quantity }}
-        </li>
-      </ul>
-
-      <v-btn type="submit" color="primary" class="mt-4">Add Recipe</v-btn>
+      <v-btn type="submit" color="#780000" class="mt-4">Add Recipe</v-btn>
     </v-form>
 
     <v-snackbar

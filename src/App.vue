@@ -1,7 +1,4 @@
 <template>
-  <link
-    href="https://fonts.googleapis.com/css?family=Nunito"
-    rel="stylesheet" />
   <div id="app">
     <nav id="nav" class="navbar navbar-expand-lg navbar-light">
       <div class="container-fluid">
@@ -89,8 +86,18 @@ export default {
 </script>
 
 <style lang="scss">
+@import url("https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap");
+
+* {
+  font-family: "Nunito", sans-serif;
+}
+
+.v-col {
+  padding: 0;
+}
+
 #app {
-  font-family: "Nunito";
+  font-family: "Nunito", sans-serif;
   font-size: 16px;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
@@ -118,7 +125,7 @@ export default {
   position: static;
   background-color: #8d99ae;
   border-radius: 8px;
-  box-shadow: 8px 8px 10 px #00000040;
+  box-shadow: 8px 8px 10px #00000040;
   height: 64px;
   width: 400px;
   margin-top: 2rem;
@@ -142,7 +149,7 @@ export default {
   position: static;
   background-color: #8d99ae14;
   border-radius: 8px;
-  box-shadow: 8px 8px 10 px #00000040;
+  box-shadow: 8px 8px 10px #00000040;
   height: 64px;
   width: 400px;
 }
@@ -161,6 +168,7 @@ export default {
   margin-right: auto;
   margin-top: 2rem;
 }
+
 .mb-3 {
   margin: 1rem !important;
   border: 1px solid;
@@ -175,6 +183,7 @@ export default {
   height: 100%;
   object-fit: cover;
 }
+
 nav {
   padding: 30px;
   background-color: #780000 !important;

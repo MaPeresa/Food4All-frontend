@@ -30,7 +30,9 @@
               <div class="hover-content pa-4">
                 <div><strong>Meal Type:</strong> {{ recipe.mealType }}</div>
                 <div>
-                  <strong>Cooking Time:</strong>
+                  <svg-icon
+                    type="mdi"
+                    :path="mdiClockTimeFourOutline"></svg-icon>
                   {{ recipe.cookingTime }} minutes
                 </div>
                 <v-rating
@@ -40,6 +42,7 @@
                   color="grey"
                   density="comfortable"
                   readonly
+                  half-increments
                   @change="rateRecipe(recipe, $event)"></v-rating>
                 <div></div>
               </div>
@@ -49,40 +52,74 @@
       </v-col>
     </v-row>
 
-    <v-dialog v-model="showRecipePopup" max-width="600px">
+    <v-dialog v-model="showRecipePopup" max-width="1000px">
       <v-card>
-        <v-card-title class="headline">{{ selectedRecipe.title }}</v-card-title>
-        <div class="image-container">
-          <v-img
-            v-if="selectedRecipe.photoUrl"
-            :src="selectedRecipe.photoUrl"
-            height="300"
-            cover></v-img>
-          <div class="overlay-text">
-            <div>
-              <strong> {{ selectedRecipe.username }}</strong>
-            </div>
-          </div>
-        </div>
-        <v-card-text>
-          <div><strong>Meal Type:</strong> {{ selectedRecipe.mealType }}</div>
-          <div>
-            <strong>Cooking Time:</strong>
-            {{ selectedRecipe.cookingTime }} minutes
-          </div>
-          <div>
-            <strong>Description:</strong> {{ selectedRecipe.description }}
-          </div>
-          <v-rating
-            v-model="selectedRecipe.userRating"
-            @change="rateRecipe(selectedRecipe, $event)"></v-rating>
-          <div>
-            <strong>Average Rating:</strong> {{ selectedRecipe.averageRating }}
-          </div>
+        <v-card-title class="headline popup-title">{{
+          selectedRecipe.title
+        }}</v-card-title>
+        <v-card-text class="popup-content">
+          <v-container>
+            <v-row>
+              <v-col cols="4">
+                <div class="top-left">
+                  <div>
+                    <strong>Meal Type:</strong> {{ selectedRecipe.mealType }}
+                  </div>
+                  <div>
+                    <svg-icon
+                      type="mdi"
+                      :path="mdiClockTimeFourOutline"></svg-icon>
+                    {{ selectedRecipe.cookingTime }} minutes
+                  </div>
+                  <div>
+                    <v-rating
+                      v-model="selectedRecipe.userRating"
+                      density="compact"
+                      size="small"
+                      half-increments
+                      hover></v-rating>
+                  </div>
+                  <div>
+                    Added by
+                    {{ selectedRecipe.username }}
+                  </div>
+                </div>
+              </v-col>
+              <v-col cols="8">
+                <div class="top-right image-container">
+                  <v-img
+                    v-if="selectedRecipe.photoUrl"
+                    :src="selectedRecipe.photoUrl"
+                    height="300"
+                    cover></v-img>
+                </div>
+              </v-col>
+            </v-row>
+            <v-row>
+              <v-col cols="4">
+                <div class="bottom-left">
+                  <strong>Ingredients:</strong>
+                  <ul>
+                    <li
+                      v-for="(ingredient, index) in selectedRecipe.ingredients"
+                      :key="index">
+                      {{ ingredient.ingredient }} - {{ ingredient.quantity }}
+                    </li>
+                  </ul>
+                </div>
+              </v-col>
+              <v-col cols="8">
+                <div class="bottom-right">
+                  <strong>Description:</strong>
+                  <pre>{{ selectedRecipe.description }}</pre>
+                </div>
+              </v-col>
+            </v-row>
+          </v-container>
         </v-card-text>
         <v-card-actions>
           <v-spacer></v-spacer>
-          <v-btn color="primary" @click="showRecipePopup = false">Close</v-btn>
+          <v-btn color="#780000" @click="showRecipePopup = false">Close</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -91,7 +128,9 @@
 
 <script>
 import { db, auth } from "@/firebase";
-import { ref } from "vue";
+import SvgIcon from "@jamescoyle/vue-icon";
+import { mdiClockTimeFourOutline } from "@mdi/js";
+import firebase from "firebase/app";
 
 export default {
   name: "Recipes",
@@ -101,10 +140,14 @@ export default {
       required: true,
     },
   },
+  components: {
+    SvgIcon,
+  },
   data() {
     return {
       showRecipePopup: false,
       selectedRecipe: {},
+      mdiClockTimeFourOutline,
     };
   },
   methods: {
@@ -172,6 +215,10 @@ export default {
   text-align: right;
 }
 
+.pre {
+  font-family: Nunito;
+}
+
 .pa-4 {
   padding: 16px;
 }
@@ -195,5 +242,48 @@ export default {
   background: rgba(0, 0, 0, 0.5);
   padding: 10px;
   border-radius: 5px;
+}
+
+.top-left,
+.top-right,
+.bottom-left,
+.bottom-right {
+  padding: 10px;
+}
+
+ul {
+  list-style-type: disc;
+  padding-left: 20px;
+  text-align: left;
+}
+
+.popup-title {
+  background-color: #780000;
+  color: white;
+  text-align: center;
+  width: 100%;
+  height: 60px;
+  font-size: x-large;
+}
+
+.popup-content {
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.popup-content::-webkit-scrollbar {
+  width: 7px;
+}
+
+.popup-content::-webkit-scrollbar-thumb {
+  background-color: #780000;
+  border-radius: 5px;
+  border: 2px solid #ffffff;
+}
+
+.bottom-right pre {
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  font-family: "Nunito", sans-serif;
 }
 </style>

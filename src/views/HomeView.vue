@@ -10,25 +10,26 @@
       </v-col>
       <v-col cols="10">
         <v-card-text>
-          <v-row class="mb-4">
-            <v-col cols="6">
-              <v-text-field
-                v-model="searchQuery"
-                label="Search Recipes"></v-text-field>
-            </v-col>
-            <v-col cols="6">
-              <v-autocomplete
-                v-model="selectedFilters"
-                :items="filterOptions"
-                label="Filter Recipes"
-                chips
-                closable-chips
-                multiple></v-autocomplete>
-            </v-col>
-          </v-row>
           <v-tabs-window v-model="tab">
             <v-tabs-window-item value="allRecipes">
               <h1>All Recipes</h1>
+              <v-row
+                ><v-col cols="2"></v-col>
+                <v-col cols="4">
+                  <v-text-field
+                    v-model="searchQuery"
+                    label="Search Recipes"></v-text-field>
+                </v-col>
+                <v-col cols="4">
+                  <v-autocomplete
+                    v-model="selectedFilters"
+                    :items="filterOptions"
+                    label="Filter Recipes"
+                    chips
+                    closable-chips
+                    multiple></v-autocomplete>
+                </v-col>
+              </v-row>
               <v-progress-circular
                 v-if="loading"
                 indeterminate></v-progress-circular>
@@ -188,7 +189,7 @@ export default {
 };
 </script>
 
-<style scoped>
+<style>
 h1 {
   text-align: center;
   margin-bottom: 20px;
@@ -200,5 +201,8 @@ h1 {
   top: 0;
   height: 100vh;
   overflow-y: auto;
+}
+.v-col {
+  padding: 0;
 }
 </style>
